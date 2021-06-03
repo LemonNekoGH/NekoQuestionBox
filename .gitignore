@@ -1,0 +1,18 @@
+# Intellij IDEA
+.idea
+*.iml
+
+# Node.js
+dist/
+node_modules/
+yarn-error.log
+
+# Golang
+go.sum
+
+# macOS
+.DS_Store
+._*
+
+# other
+build/
