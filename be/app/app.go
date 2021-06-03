@@ -2,6 +2,7 @@ package app
 
 import (
 	"fmt"
+	"github.com/iris-contrib/middleware/cors"
 	"github.com/kataras/golog"
 	"github.com/kataras/iris/v12"
 	"github.com/kataras/iris/v12/context"
@@ -54,6 +55,16 @@ func (app *NekoQuestionBoxApp) ReadCmdArgs() {
 	if utils.IsArrayContains(os.Args, "--dev") {
 		app.DevMode = true
 	}
+
+	allowOrigin := "http://qbox.lemonneko.moe"
+
+	if app.DevMode {
+		allowOrigin = "*"
+	}
+
+	app.Iris.Use(cors.New(cors.Options{
+		AllowedOrigins: []string{allowOrigin},
+	}))
 
 	var (
 		portArgIndex int

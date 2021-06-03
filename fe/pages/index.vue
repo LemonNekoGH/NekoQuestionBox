@@ -25,7 +25,7 @@
             <v-text-field v-model="question" :dense="$vuetify.breakpoint.mobile" outlined label="在这里输入想要问柠喵的问题" />
           </div>
           <div class="flex-box">
-            <v-text-field v-model="question" :dense="$vuetify.breakpoint.mobile" class="flex-1" outlined label="在这里输入看到的验证码" />
+            <v-text-field v-model="question" :dense="$vuetify.breakpoint.mobile" class="flex-1" outlined label="在这里输入在右侧图中看到的验证码" />
             <div class="width-10px" />
             <v-tooltip bottom>
               <template #activator="{ attr, on }">
@@ -46,12 +46,13 @@
         <v-divider />
         <v-card-actions>
           <v-spacer />
-          <v-btn text outlined>
+          <v-btn text outlined @click="submitQuestion">
             提问
           </v-btn>
         </v-card-actions>
       </v-card>
     </v-col>
+    <v-snackbar v-model="snackbar.show" :color="snackbar.color" :text="snackbar.text" top />
   </v-row>
 </template>
 
@@ -65,11 +66,12 @@ interface ComponentData {
   question: string
   captchaId: string
   captchaValue: string
-}
-
-interface QuestionData {
-  question: string
-  captchaValue: string
+  snackbar: {
+    show: boolean
+    color: 'warn' | 'error' | ''
+    text: string
+  }
+  submitting: boolean
 }
 
 export default Vue.extend({
@@ -79,7 +81,13 @@ export default Vue.extend({
       refreshingAvailable: false,
       question: '',
       captchaId: '',
-      captchaValue: ''
+      captchaValue: '',
+      snackbar: {
+        show: false,
+        color: '',
+        text: ''
+      },
+      submitting: false
     }
   },
   computed: {
@@ -102,6 +110,15 @@ export default Vue.extend({
     },
     async getCaptchaId () {
       this.captchaId = await api.be.getCaptchaId()
+    },
+    async submitQuestion () {
+      this.submitting = true
+      await api.be.submitQuestion({
+        question: this.question,
+        captchaId: this.captchaId,
+        captchaValue: this.captchaValue
+      })
+      this.submitting = false
     }
   }
 })
