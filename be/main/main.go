@@ -26,6 +26,7 @@ func main() {
 	qboxApp.Iris.Options("/{any:path}", func(context *context.Context) {
 		context.StatusCode(200)
 	})
+	qboxApp.Get("/bing-wallpaper", routes.BingWallpaper)
 
 	qboxApp.Start()
 }

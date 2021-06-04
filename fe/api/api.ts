@@ -1,4 +1,4 @@
-import axios from 'axios'
+import axios, { AxiosError, AxiosResponse } from 'axios'
 
 axios.defaults.headers.get = {
   Accept: 'application/json'
@@ -34,14 +34,24 @@ const backend = {
       return ''
     }
   },
-  async submitQuestion (data: QuestionData) {
-    try {
-      const res = await axios.post('/question', data)
-      console.log(res.data)
-      return res.status
-    } catch (e) {
-      console.log(e.message)
+  submitQuestion (data: QuestionData): Promise<number> {
+    return new Promise<number>((resolve) => {
+      axios.post('/question', data).then((res: AxiosResponse) => {
+        resolve(res.status)
+      }).catch((e: AxiosError) => {
+        if (e.response?.status) {
+          resolve(e.response.status)
+        }
+        resolve(500)
+      })
+    })
+  },
+  async getWallpaper (): Promise<string> {
+    const res = await axios.get('/bing-wallpaper')
+    if (res.data.images[0].url) {
+      return res.data.images[0].urlbase
     }
+    return ''
   }
 }
 

@@ -1,6 +1,7 @@
 package routes
 
 import (
+	"database/sql"
 	"github.com/dchest/captcha"
 	"github.com/kataras/golog"
 	"github.com/kataras/iris/v12/context"
@@ -22,7 +23,7 @@ func SubmitQuestion(app *app.NekoQuestionBoxApp, ctx *context.Context) {
 	var question = &SubmitData{}
 	err := ctx.ReadJSON(question)
 	if err != nil {
-		ctx.StatusCode(http.StatusInternalServerError)
+		ctx.StatusCode(http.StatusBadRequest)
 		golog.Error(err.Error())
 		return
 	}
@@ -37,5 +38,40 @@ func SubmitQuestion(app *app.NekoQuestionBoxApp, ctx *context.Context) {
 	app.CaptchaSuccessTimes++
 	golog.Warnf("验证成功，已累计 %d 次", app.CaptchaSuccessTimes)
 
-	_, _ = ctx.JSON(question)
+	ctx.Values().Set("question", question.Question)
+
+	SaveQuestion(app, ctx)
+}
+
+func SaveQuestion(app *app.NekoQuestionBoxApp, ctx *context.Context) {
+	question := ""
+	if ctx.Path() == "/save-question" {
+		err := ctx.ReadBody(question)
+		if err != nil {
+			golog.Error(err.Error())
+			return
+		}
+	}
+	question = ctx.Values().GetString("question")
+
+	db, err := sql.Open("mysql", "root:LemonNeko@tcp(localhost:3306)")
+	if err != nil {
+		golog.Error(err.Error())
+		ctx.StatusCode(http.StatusInternalServerError)
+		return
+	}
+
+	_, err = db.Exec("")
+	if err != nil {
+		golog.Error(err.Error())
+		ctx.StatusCode(http.StatusInternalServerError)
+		return
+	}
+
+	err = db.Close()
+	if err != nil {
+		golog.Error(err.Error())
+		ctx.StatusCode(http.StatusInternalServerError)
+		return
+	}
 }
