@@ -13,5 +13,17 @@ func TestSaveQuestion(t *testing.T) {
 	app.Post("/save-question", routes.SaveQuestion)
 
 	e := httptest.New(t, app.Iris)
-	e.POST("/save-question").WithHeader("Accept", "application/json").WithText("miao").Expect().Status(http.StatusOK)
+
+	submitData := routes.SubmitData{
+		Question: "miao",
+	}
+	e.POST("/save-question").WithHeader("Accept", "application/json").WithJSON(submitData).Expect().Status(http.StatusOK)
+}
+
+func TestGetQuestion(t *testing.T) {
+	app := nekoApp.NewApp()
+	app.Get("/question", routes.GetQuestion)
+
+	e := httptest.New(t, app.Iris)
+	e.GET("/question").WithHeader("Accept", "application/json").Expect().Status(httptest.StatusOK)
 }

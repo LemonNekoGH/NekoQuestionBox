@@ -10,10 +10,17 @@ axios.defaults.headers.post = {
 
 axios.defaults.baseURL = process.env.baseApiUrl
 
-export interface QuestionData {
+export interface SubmitData {
   question: string
   captchaValue: string
   captchaId: string
+}
+
+export interface ResponseData {
+  question: string
+  answerTime: number
+  answer: string
+  time: number
 }
 
 const backend = {
@@ -30,11 +37,10 @@ const backend = {
       const res = await axios.get('/captcha')
       return res.data.id
     } catch (e) {
-      console.log(e.message)
       return ''
     }
   },
-  submitQuestion (data: QuestionData): Promise<number> {
+  submitQuestion (data: SubmitData): Promise<number> {
     return new Promise<number>((resolve) => {
       axios.post('/question', data).then((res: AxiosResponse) => {
         resolve(res.status)
@@ -52,7 +58,17 @@ const backend = {
       return res.data.images[0].urlbase
     }
     return ''
+  },
+  async getQuestions (): Promise<ResponseData[]> {
+    try {
+      const res = await axios.get('/question')
+      return res.data
+    } catch (e) {
+      console.log(e)
+      return []
+    }
   }
+
 }
 
 export const api = {

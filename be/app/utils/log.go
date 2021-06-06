@@ -11,6 +11,10 @@ func Infof(format string, arg ...interface{}) {
 	Logf(golog.InfoLevel, format, arg...)
 }
 
+func Warnf(format string, arg ...interface{}) {
+	Logf(golog.WarnLevel, format, arg...)
+}
+
 func Errorf(format string, arg ...interface{}) {
 	Logf(golog.ErrorLevel, format, arg...)
 }

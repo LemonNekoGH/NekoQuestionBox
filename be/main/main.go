@@ -22,6 +22,7 @@ func main() {
 	qboxApp.Get("/captcha-image", routes.CaptchaImage)
 
 	qboxApp.Post("/question", routes.SubmitQuestion)
+	qboxApp.Get("/question", routes.GetQuestion)
 
 	qboxApp.Iris.Options("/{any:path}", func(context *context.Context) {
 		context.StatusCode(200)

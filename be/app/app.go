@@ -22,6 +22,8 @@ type NekoQuestionBoxApp struct {
 	// 验证失败的次数
 	CaptchaFailedTimes  int
 	CaptchaSuccessTimes int
+	// 数据源
+	DataSource string
 }
 
 type NekoHandler func(app *NekoQuestionBoxApp, ctx *context.Context)
@@ -34,19 +36,16 @@ func NewApp() *NekoQuestionBoxApp {
 		Iris:                irisApp,
 		CaptchaFailedTimes:  0,
 		CaptchaSuccessTimes: 0,
+		DataSource:          "root:LemonNeko@tcp(localhost:3306)/go_test",
 	}
 }
 
 // NewTestApp
 // 新建用于测试的 APP 实例
 func NewTestApp() *NekoQuestionBoxApp {
-	irisApp := iris.New()
-	return &NekoQuestionBoxApp{
-		Iris:                irisApp,
-		DevMode:             true,
-		CaptchaFailedTimes:  0,
-		CaptchaSuccessTimes: 0,
-	}
+	app := NewApp()
+	app.DevMode = true
+	return app
 }
 
 // ReadCmdArgs
@@ -83,6 +82,10 @@ func (app *NekoQuestionBoxApp) ReadCmdArgs() {
 		app.port = portNumber
 	} else {
 		app.port = 80
+	}
+
+	if !app.DevMode {
+		app.DataSource = os.Getenv("QBOX_DATASOURCE")
 	}
 }
 

@@ -1,3 +1,19 @@
+html, body, #__nuxt, #__layout,.v-main, .v-main__wrap {
+  height: 100%;
+}
+
+.v-main__wrap {
+  overflow: auto;
+  padding-bottom: 64px;
+  &::-webkit-scrollbar {
+    background-color: rgba(0,0,0,.2);
+  }
+  &::-webkit-scrollbar-thumb {
+     backdrop-filter: blur(20px);
+    background-color: rgba(0,0,0,.2);
+  }
+}
+
 .flex-box {
   display: flex;
 }
@@ -16,4 +32,13 @@
 .blur {
   backdrop-filter: blur(20px) !important;
   background: rgba(0,0,0,.2)!important;
+  -moz-backdrop-filter: blur(20px) !important;
+}
+.switch-on-app-bar {
+  .v-input__slot {
+    margin-bottom: 0;
+  }
+  .v-messages {
+    display: none;
+  }
 }
