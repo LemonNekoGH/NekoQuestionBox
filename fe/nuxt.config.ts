@@ -1,4 +1,3 @@
-import colors from 'vuetify/es5/util/colors'
 import { NuxtConfig } from '@nuxt/types'
 import { env } from './env'
 
@@ -11,18 +10,18 @@ if (!nodeEnv) {
 const config: NuxtConfig = {
   target: 'static',
   head: {
-    titleTemplate: '%s - neko-question-box-fe',
-    title: 'neko-question-box-fe',
+    titleTemplate: '%s - 柠喵的问题箱',
+    title: '柠喵的问题箱',
     htmlAttrs: {
       lang: 'zh'
     },
     meta: [
       { charset: 'utf-8' },
       { name: 'viewport', content: 'width=device-width, initial-scale=1' },
-      { hid: 'description', name: 'description', content: '' }
+      { hid: 'description', name: 'description', content: 'LemonNeko\'s Question Box' }
     ],
     link: [
-      { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }
+      { rel: 'icon', type: 'image/png', href: '/favicon.png' }
     ]
   },
   css: [
@@ -45,11 +44,7 @@ const config: NuxtConfig = {
       dark: false,
       themes: {
         light: {
-          primary: '#ff8a65',
-          info: colors.teal.lighten1,
-          warning: colors.amber.base,
-          error: colors.deepOrange.accent4,
-          success: colors.green.accent3
+          primary: '#ff8a65'
         }
       }
     },

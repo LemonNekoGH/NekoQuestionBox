@@ -8,12 +8,6 @@ import (
 // RootPath
 // 用于给前端检测服务器状态
 func RootPath(app *app.NekoQuestionBoxApp, ctx *context.Context) {
-	if app.DevMode {
-		ctx.Header("Access-Control-Allow-Origin", "*")
-	} else {
-		ctx.Header("Access-Control-Allow-Origin", "qbox.lemonneko.moe")
-	}
-
 	accept := ctx.GetHeader("Accept")
 	if accept == "application/json" {
 		ctx.StatusCode(200)

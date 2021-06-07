@@ -18,11 +18,6 @@ type CaptchaData struct {
 // GET 获取新的 Captcha ID
 // POST 进行验证
 func Captcha(app *app.NekoQuestionBoxApp, ctx *context.Context) {
-	if app.DevMode {
-		ctx.Header("Access-Control-Allow-Origin", "*")
-	} else {
-		ctx.Header("Access-Control-Allow-Origin", "qbox.lemonneko.moe")
-	}
 	if !utils.ShouldAcceptJson(ctx) {
 		return
 	}
@@ -38,11 +33,6 @@ func CaptchaImage(app *app.NekoQuestionBoxApp, ctx *context.Context) {
 	id := ctx.URLParamDefault("id", "null")
 	if id == "null" {
 		ctx.StatusCode(http.StatusBadRequest)
-	}
-	if app.DevMode {
-		ctx.Header("Access-Control-Allow-Origin", "*")
-	} else {
-		ctx.Header("Access-Control-Allow-Origin", "qbox.lemonneko.moe")
 	}
 	ctx.Header("Content-Type", "image/png")
 	ctx.Header("Cache-Control", "no-store")

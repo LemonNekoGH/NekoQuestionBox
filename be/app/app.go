@@ -2,6 +2,7 @@ package app
 
 import (
 	"fmt"
+	"github.com/iris-contrib/middleware/cors"
 	"github.com/kataras/golog"
 	"github.com/kataras/iris/v12"
 	"github.com/kataras/iris/v12/context"
@@ -21,6 +22,8 @@ type NekoQuestionBoxApp struct {
 	// 验证失败的次数
 	CaptchaFailedTimes  int
 	CaptchaSuccessTimes int
+	// 数据源
+	DataSource string
 }
 
 type NekoHandler func(app *NekoQuestionBoxApp, ctx *context.Context)
@@ -33,19 +36,16 @@ func NewApp() *NekoQuestionBoxApp {
 		Iris:                irisApp,
 		CaptchaFailedTimes:  0,
 		CaptchaSuccessTimes: 0,
+		DataSource:          "root:LemonNeko@tcp(localhost:3306)/go_test",
 	}
 }
 
 // NewTestApp
 // 新建用于测试的 APP 实例
 func NewTestApp() *NekoQuestionBoxApp {
-	irisApp := iris.New()
-	return &NekoQuestionBoxApp{
-		Iris:                irisApp,
-		DevMode:             true,
-		CaptchaFailedTimes:  0,
-		CaptchaSuccessTimes: 0,
-	}
+	app := NewApp()
+	app.DevMode = true
+	return app
 }
 
 // ReadCmdArgs
@@ -54,6 +54,16 @@ func (app *NekoQuestionBoxApp) ReadCmdArgs() {
 	if utils.IsArrayContains(os.Args, "--dev") {
 		app.DevMode = true
 	}
+
+	allowOrigin := "https://qbox.lemonneko.moe"
+
+	if app.DevMode {
+		allowOrigin = "*"
+	}
+
+	app.Iris.Use(cors.New(cors.Options{
+		AllowedOrigins: []string{allowOrigin},
+	}))
 
 	var (
 		portArgIndex int
@@ -71,7 +81,11 @@ func (app *NekoQuestionBoxApp) ReadCmdArgs() {
 		}
 		app.port = portNumber
 	} else {
-		app.port = 80
+		app.port = 443
+	}
+
+	if !app.DevMode {
+		app.DataSource = os.Getenv("QBOX_DATASOURCE")
 	}
 }
 
@@ -94,5 +108,9 @@ func (app *NekoQuestionBoxApp) Post(path string, handler NekoHandler) {
 // Start
 // 启动服务器
 func (app *NekoQuestionBoxApp) Start() {
-	app.Iris.Listen(fmt.Sprintf(":%d", app.port))
+	port := fmt.Sprintf("0.0.0.0:443")
+	if app.DevMode {
+		utils.Infof("key file [%s], cert file [%s]", os.Getenv("QBOX_KEY_FILE"), os.Getenv("QBOX_CERT_FILE"))
+	}
+	app.Iris.Run(iris.TLS(port, os.Getenv("QBOX_CERT_FILE"), os.Getenv("QBOX_KEY_FILE")))
 }

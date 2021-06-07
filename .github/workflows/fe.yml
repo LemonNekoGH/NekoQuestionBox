@@ -20,11 +20,11 @@ jobs:
         node: [14]
 
     steps:
-      - name: Checkout 🛎
+      - name: Checkout
         uses: actions/checkout@master
 
-      - name: Setup node env 🏗
-        uses: actions/setup-node@v2.1.2
+      - name: Setup node env
+        uses: actions/setup-node@v2.1.5
         with:
           node-version: ${{ matrix.node }}
           check-latest: true
@@ -33,7 +33,7 @@ jobs:
         id: yarn-cache-dir-path
         run: echo "::set-output name=dir::$(yarn cache dir)"
 
-      - name: Cache node_modules 📦
+      - name: Cache node_modules
         uses: actions/cache@v2
         id: yarn-cache # use this to check for `cache-hit` (`steps.yarn-cache.outputs.cache-hit != 'true'`)
         with:
@@ -42,11 +42,15 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-yarn-
 
-      - name: Install dependencies 👨🏻‍💻
+      - name: Install dependencies
         run: cd fe && yarn
 
-      - name: Run linter 👀
-        run: yarn lint
+      - name: Build
+        run: cd fe && yarn build
 
-      - name: Run tests 🧪
-        run: yarn test
+      - name: Deploy
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: fe/dist
+          publish_branch: pages  # deploying branch

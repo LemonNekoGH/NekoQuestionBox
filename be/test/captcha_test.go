@@ -10,7 +10,6 @@ import (
 func TestCaptcha(t *testing.T) {
 	app := nekoApp.NewTestApp()
 	app.Get("/captcha", routes.Captcha)
-	app.Post("/captcha", routes.Captcha)
 
 	e := httptest.New(t, app.Iris)
 	println(e.GET("/captcha").WithHeader("Accept", "application/json").Expect().Body().Raw())
