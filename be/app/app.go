@@ -55,7 +55,7 @@ func (app *NekoQuestionBoxApp) ReadCmdArgs() {
 		app.DevMode = true
 	}
 
-	allowOrigin := "http://qbox.lemonneko.moe"
+	allowOrigin := "https://qbox.lemonneko.moe"
 
 	if app.DevMode {
 		allowOrigin = "*"

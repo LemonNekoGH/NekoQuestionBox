@@ -52,6 +52,8 @@ export default Vue.extend({
   },
   mounted () {
     this.getBackground()
+    const media = window.matchMedia('(prefers-color-scheme: dark)')
+    media.addEventListener('change', this.changeColorScheme)
   },
   methods: {
     getBackground () {
@@ -62,6 +64,21 @@ export default Vue.extend({
       api.be.getWallpaper().then((res) => {
         this.background = res
       })
+    },
+    changeColorScheme () {
+      let link: HTMLLinkElement | null = document.querySelector("link[rel~='icon']")
+      if (!link) {
+        link = document.createElement('link')
+      }
+      link.rel = 'icon'
+      link.type = 'image/png'
+      if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        console.log('now entering dark mode')
+        link.href = '/favicon-dark.png'
+      } else {
+        console.log('now exiting dark mode')
+        link.href = '/favicon.png'
+      }
     }
   }
 })
