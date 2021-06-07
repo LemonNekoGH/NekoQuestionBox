@@ -1,11 +1,11 @@
 import { NuxtOptionsEnv } from '@nuxt/types/config/env'
 
 const development: NuxtOptionsEnv = {
-  baseApiUrl: 'http://localhost:5000'
+  baseApiUrl: 'https://localhost'
 }
 
 const production: NuxtOptionsEnv = {
-  baseApiUrl: 'http://qboxb.lemonneko.moe'
+  baseApiUrl: 'https://qboxb.lemonneko.moe'
 }
 
 export const env: { development: NuxtOptionsEnv, production: NuxtOptionsEnv, [p: string]: NuxtOptionsEnv } = {

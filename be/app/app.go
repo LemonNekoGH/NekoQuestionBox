@@ -81,7 +81,7 @@ func (app *NekoQuestionBoxApp) ReadCmdArgs() {
 		}
 		app.port = portNumber
 	} else {
-		app.port = 80
+		app.port = 443
 	}
 
 	if !app.DevMode {
@@ -108,5 +108,9 @@ func (app *NekoQuestionBoxApp) Post(path string, handler NekoHandler) {
 // Start
 // 启动服务器
 func (app *NekoQuestionBoxApp) Start() {
-	app.Iris.Listen(fmt.Sprintf(":%d", app.port))
+	port := fmt.Sprintf("0.0.0.0:443")
+	if app.DevMode {
+		utils.Infof("key file [%s], cert file [%s]", os.Getenv("QBOX_KEY_FILE"), os.Getenv("QBOX_CERT_FILE"))
+	}
+	app.Iris.Run(iris.TLS(port, os.Getenv("QBOX_CERT_FILE"), os.Getenv("QBOX_KEY_FILE")))
 }
