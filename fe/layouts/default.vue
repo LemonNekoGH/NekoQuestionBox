@@ -15,6 +15,7 @@
       </v-app-bar>
       <v-main>
         <nuxt />
+        <neko-footer v-if="!$vuetify.breakpoint.mobile" />
       </v-main>
     </v-img>
   </v-app>
@@ -22,8 +23,12 @@
 <script lang="ts">
 import Vue from 'vue'
 import { api } from '~/api/api'
+import NekoFooter from '~/components/neko-footer/index.vue'
 
 export default Vue.extend({
+  components: {
+    NekoFooter
+  },
   data () {
     return {
       background: '',

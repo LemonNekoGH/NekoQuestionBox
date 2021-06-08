@@ -1,7 +1,7 @@
 import { NuxtOptionsEnv } from '@nuxt/types/config/env'
 
 const development: NuxtOptionsEnv = {
-  baseApiUrl: 'https://localhost'
+  baseApiUrl: 'http://localhost:5000'
 }
 
 const production: NuxtOptionsEnv = {

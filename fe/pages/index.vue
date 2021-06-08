@@ -28,7 +28,7 @@
                 aria-autocomplete="none"
                 :dense="$vuetify.breakpoint.mobile"
                 outlined
-                label="在这里输入想要问柠喵的问题"
+                label="想要问柠喵的问题"
                 prepend-icon="mdi-help-circle-outline"
               />
             </div>
@@ -40,7 +40,7 @@
                 :dense="$vuetify.breakpoint.mobile"
                 class="flex-1"
                 outlined
-                label="在这里输入右侧图案中的数字"
+                label="右侧图案的数字"
               />
               <div class="width-10px" />
               <v-tooltip bottom>
@@ -68,7 +68,6 @@
               <v-tooltip
                 bottom
               >
-                x
                 <template #activator="{ attr, on }">
                   <v-img
                     v-show="!captchaLoadFailed"
@@ -98,24 +97,30 @@
         {{ snackbar.text }}
       </v-snackbar>
     </v-row>
-    <v-row v-for="(item, index) in questions" :key="index">
+    <v-row v-for="(item, index) in questions" :key="index" :dense="$vuetify.breakpoint.mobile">
       <v-col>
         <v-card class="blur" dark rounded="lg">
-          <v-app-bar color="transparent" flat>
-            <span class="text-h6">
-              提问：{{ item.question }}
-            </span>
-            <v-spacer />
-            <span class="text-body-1">{{ formatTime(item.time) }}</span>
-          </v-app-bar>
+          <v-card-text>
+            <div :class="$vuetify.breakpoint.mobile || item.question.length > 10 ? '' : 'flex-box align-items'">
+              <div class="text-h6" :class="$vuetify.breakpoint.mobile ? '' : 'flex-1'">
+                提问：{{ item.question }}
+              </div>
+              <div class="text-body-1">
+                {{ formatTime(item.time) }}
+              </div>
+            </div>
+          </v-card-text>
           <v-divider />
-          <v-app-bar color="transparent" flat>
-            <span class="text-h6">
-              柠喵：{{ item.answer ? item.answer : '柠喵还没有回答' }}
-            </span>
-            <v-spacer />
-            <span v-if="item.answerTime" class="text-body-1">{{ formatTime(item.answerTime) }}</span>
-          </v-app-bar>
+          <v-card-text>
+            <div :class="$vuetify.breakpoint.mobile || item.question.length > 10 ? '' : 'flex-box align-items'">
+              <div class="text-h6" :class="$vuetify.breakpoint.mobile ? '' : 'flex-1'">
+                柠喵：{{ item.answer ? item.answer : '柠喵还没有回答' }}
+              </div>
+              <div v-if="item.answerTime" class="text-body-1">
+                {{ formatTime(item.answerTime) }}
+              </div>
+            </div>
+          </v-card-text>
         </v-card>
       </v-col>
     </v-row>

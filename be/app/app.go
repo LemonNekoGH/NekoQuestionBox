@@ -110,7 +110,8 @@ func (app *NekoQuestionBoxApp) Post(path string, handler NekoHandler) {
 func (app *NekoQuestionBoxApp) Start() {
 	port := fmt.Sprintf("0.0.0.0:443")
 	if app.DevMode {
-		utils.Infof("key file [%s], cert file [%s]", os.Getenv("QBOX_KEY_FILE"), os.Getenv("QBOX_CERT_FILE"))
+		app.Iris.Listen(":5000")
+	} else {
+		app.Iris.Run(iris.TLS(port, os.Getenv("QBOX_CERT_FILE"), os.Getenv("QBOX_KEY_FILE")))
 	}
-	app.Iris.Run(iris.TLS(port, os.Getenv("QBOX_CERT_FILE"), os.Getenv("QBOX_KEY_FILE")))
 }

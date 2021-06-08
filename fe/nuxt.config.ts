@@ -24,8 +24,7 @@ const config: NuxtConfig = {
       { rel: 'icon', type: 'image/png', href: '/favicon.png' }
     ]
   },
-  css: [
-  ],
+  css: [],
   plugins: [
   ],
   components: true,
@@ -49,12 +48,15 @@ const config: NuxtConfig = {
       }
     },
     breakpoint: {
-      mobileBreakpoint: 'sm'
+      mobileBreakpoint: 'xs'
     }
   },
   build: {
   },
-  env: env[nodeEnv]
+  env: env[nodeEnv],
+  server: {
+    host: '0.0.0.0'
+  }
 }
 
 export default config

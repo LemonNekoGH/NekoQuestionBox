@@ -1,10 +1,9 @@
 html, body, #__nuxt, #__layout,.v-main, .v-main__wrap {
-  height: 100%;
+  max-height: 100%;
 }
 
 .v-main__wrap {
   overflow: auto;
-  padding-bottom: 64px;
   &::-webkit-scrollbar {
     background-color: rgba(0,0,0,.2);
   }
@@ -41,4 +40,33 @@ html, body, #__nuxt, #__layout,.v-main, .v-main__wrap {
   .v-messages {
     display: none;
   }
+}
+
+@media screen and (max-width: 600px) {
+  .v-main__wrap {
+    &::-webkit-scrollbar {
+      width: 10px;
+      background-color: rgba(0,0,0,.2);
+    }
+    &::-webkit-scrollbar-thumb {
+      backdrop-filter: blur(20px);
+      background-color: rgba(0,0,0,.2);
+    }
+  }
+}
+.light {
+  font-weight: 400;
+}
+.v-application {
+  .text-h5, .text-h6, .text-body-1 {
+    font-family: 'JetBrains Mono', sans-serif!important;
+  }
+}
+
+@font-face{
+  font-family: 'JetBrains Mono';
+  src: url('https://raw.githubusercontent.com/JetBrains/JetBrainsMono/master/fonts/webfonts/JetBrainsMono-Regular.woff2') format('woff2'),
+  url('https://raw.githubusercontent.com/JetBrains/JetBrainsMono/master/fonts/ttf/JetBrainsMono-Regular.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
 }
