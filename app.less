@@ -70,3 +70,26 @@ html, body, #__nuxt, #__layout,.v-main, .v-main__wrap {
   font-weight: normal;
   font-style: normal;
 }
+
+.footer-avatar {
+  border-radius: 5px;
+}
+.footer-name {
+  font-size: 1.5em;
+  font-weight: 400;
+}
+.footer-avatar-and-name {
+  display: flex;
+  align-items: center;
+}
+
+@media screen and (max-width: 600px) {
+  .footer-avatar-and-name {
+    justify-content: center;
+  }
+}
+
+.info-dialog-container {
+  background-color: white;
+  height: 100%;
+}
