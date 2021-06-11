@@ -20,7 +20,11 @@ const config: NuxtConfig = {
       { name: 'viewport', content: 'width=device-width, initial-scale=1' },
       { hid: 'description', name: 'description', content: 'LemonNeko\'s Question Box' },
       { name: 'twitter:card', content: 'summary' },
-      { name: 'twitter:creator', content: '@lemon_neko_cn' },
+      { name: 'twitter:site', content: '@lemon_neko_cn' },
+      { name: 'twitter:image', content: 'https://qbox.lemonneko.moe/question_48x48.png' },
+      { name: 'twitter:image:alt', content: '柠喵的问题箱' },
+      { name: 'twitter:description', content: '在这里，大家可以匿名向柠喵提问哦' },
+      { name: 'twitter:title', content: '柠喵的问题箱' },
       { property: 'og:image', content: 'https://qbox.lemonneko.moe/question_48x48.png' },
       { property: 'og:title', content: '柠喵的问题箱' },
       { property: 'og:description', content: '在这里，大家可以匿名向柠喵提问哦' }
