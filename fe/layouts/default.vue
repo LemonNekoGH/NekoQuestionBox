@@ -6,18 +6,73 @@
         <v-spacer />
         <v-switch
           v-model="getBackgroundFromBing"
+          :loading="loadingBingWallpaper"
           light
           inset
           color="white"
           class="switch-on-app-bar"
           prepend-icon="mdi-microsoft-bing"
         />
+        <v-btn v-if="$vuetify.breakpoint.mobile" icon @click="openInfo = true">
+          <v-icon>mdi-information</v-icon>
+        </v-btn>
       </v-app-bar>
       <v-main>
         <nuxt />
         <neko-footer v-if="!$vuetify.breakpoint.mobile" />
       </v-main>
     </v-img>
+    <v-snackbar v-model="snackbar.show" elevation="0" :color="snackbar.color" top app>
+      {{ snackbar.text }}
+    </v-snackbar>
+    <v-dialog v-model="openInfo" transition="dialog-bottom-transition" fullscreen>
+      <v-app-bar flat color="white">
+        <v-app-bar-title>关于</v-app-bar-title>
+        <v-spacer />
+        <v-btn text outlined color="error" @click="openInfo = false">
+          关闭
+        </v-btn>
+      </v-app-bar>
+      <v-container class="info-dialog-container">
+        <v-row>
+          <v-col>
+            <v-card outlined>
+              <v-card-text>
+                <div class="footer-avatar-and-name">
+                  <img src="LemonNeko_Avatar.png" height="36" width="36" alt="柠喵的头像" class="footer-avatar">
+                  <div class="width-10px" />
+                  <span class="footer-name">
+                    LemonNeko 柠喵
+                  </span>
+                </div>
+                <div style="height: 10px" />
+                <div class="light" style="text-align: center">
+                  本项目在 Apache 2.0 许可证下开源
+                </div>
+                <div style="height: 20px" />
+                <v-row class="footer-icons" justify="center">
+                  <v-btn icon class="footer-icon" href="https://twitter.com/@lemon_neko_cn" target="_blank">
+                    <v-icon color="#1da1f2">
+                      mdi-twitter
+                    </v-icon>
+                  </v-btn>
+                  <v-btn icon class="footer-icon" href="https://github.com/LemonNekoGH" target="_blank">
+                    <v-icon color="black">
+                      mdi-github
+                    </v-icon>
+                  </v-btn>
+                  <v-btn icon class="footer-icon" href="https://t.me/lemonneko" target="_blank">
+                    <v-icon color="#179cde">
+                      mdi-telegram
+                    </v-icon>
+                  </v-btn>
+                </v-row>
+              </v-card-text>
+            </v-card>
+          </v-col>
+        </v-row>
+      </v-container>
+    </v-dialog>
   </v-app>
 </template>
 <script lang="ts">
@@ -32,7 +87,14 @@ export default Vue.extend({
   data () {
     return {
       background: '',
-      getBackgroundFromBing: true
+      getBackgroundFromBing: true,
+      snackbar: {
+        show: false,
+        color: '',
+        text: ''
+      },
+      loadingBingWallpaper: false,
+      openInfo: false
     }
   },
   computed: {
@@ -62,12 +124,27 @@ export default Vue.extend({
   },
   methods: {
     getBackground () {
+      this.loadingBingWallpaper = true
       if (!this.getBackgroundFromBing) {
         this.background = ''
         return
       }
       api.be.getWallpaper().then((res) => {
-        this.background = res
+        if (res === 'api-failed') {
+          this.snackbar.color = 'warning'
+          this.snackbar.text = '获取 Bing 壁纸失败，Bing 壁纸的 API 可能发生了变动'
+          this.snackbar.show = true
+          this.getBackgroundFromBing = false
+        } else if (res === 'api-error') {
+          this.snackbar.color = 'error'
+          this.snackbar.text = '获取 Bing 壁纸失败，服务器可能没有准备好'
+          this.snackbar.show = true
+          this.getBackgroundFromBing = false
+        } else {
+          this.background = res
+        }
+      }).finally(() => {
+        this.loadingBingWallpaper = false
       })
     },
     changeColorScheme () {
@@ -78,12 +155,16 @@ export default Vue.extend({
       link.rel = 'icon'
       link.type = 'image/png'
       if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
-        console.log('now entering dark mode')
         link.href = '/favicon-dark.png'
       } else {
-        console.log('now exiting dark mode')
         link.href = '/favicon.png'
       }
+    },
+    copyEmail () {
+      navigator.clipboard.writeText('chheese048@gmail.com')
+      this.snackbar.color = 'success'
+      this.snackbar.text = '已复制柠喵的邮箱'
+      this.snackbar.show = true
     }
   }
 })

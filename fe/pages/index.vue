@@ -113,9 +113,7 @@
           <v-divider />
           <v-card-text>
             <div :class="$vuetify.breakpoint.mobile || item.question.length > 10 ? '' : 'flex-box align-items'">
-              <div class="text-h6" :class="$vuetify.breakpoint.mobile ? '' : 'flex-1'">
-                柠喵：{{ item.answer ? item.answer : '柠喵还没有回答' }}
-              </div>
+              <div class="text-h6" :class="$vuetify.breakpoint.mobile ? '' : 'flex-1'" v-html="returnDefaultIfNoAnswer(item.answer)" />
               <div v-if="item.answerTime" class="text-body-1">
                 {{ formatTime(item.answerTime) }}
               </div>
@@ -243,6 +241,12 @@ export default Vue.extend({
     },
     formatTime (time: number): string {
       return moment(time).format('YYYY 年 M 月 D 日 HH:mm:ss')
+    },
+    returnDefaultIfNoAnswer (answer: string): string {
+      if (!answer) {
+        return '柠喵：柠喵还没有回答'
+      }
+      return '柠喵：' + answer
     }
   }
 })

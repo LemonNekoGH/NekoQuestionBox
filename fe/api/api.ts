@@ -53,11 +53,15 @@ const backend = {
     })
   },
   async getWallpaper (): Promise<string> {
-    const res = await axios.get('/bing-wallpaper')
-    if (res.data.images[0].url) {
-      return res.data.images[0].urlbase
+    try {
+      const res = await axios.get('/bing-wallpaper')
+      if (res.data.images[0].url) {
+        return res.data.images[0].urlbase
+      }
+      return 'api-failed'
+    } catch (e) {
+      return 'api-error'
     }
-    return ''
   },
   async getQuestions (): Promise<ResponseData[]> {
     try {
