@@ -36,23 +36,15 @@
         </v-row>
       </v-col>
     </v-row>
-    <v-snackbar v-model="copySuccess" color="success" timeout="1500">
-      邮箱已复制到剪贴板
-    </v-snackbar>
   </v-footer>
 </template>
 <script lang="ts">
 import Vue from 'vue'
 export default Vue.extend({
-  data () {
-    return {
-      copySuccess: false
-    }
-  },
   methods: {
     copyEmail () {
       navigator.clipboard.writeText('chheese048@gmail.com')
-      this.copySuccess = true
+      this.$msg.success('邮箱已复制到剪贴板')
     }
   }
 })

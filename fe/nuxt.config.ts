@@ -35,6 +35,7 @@ const config: NuxtConfig = {
   },
   css: [],
   plugins: [
+    { src: '~/plugins/vuetify-message', ssr: false }
   ],
   components: true,
   buildModules: [

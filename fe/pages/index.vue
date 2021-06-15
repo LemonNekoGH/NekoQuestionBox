@@ -93,9 +93,6 @@
           </v-card-actions>
         </v-card>
       </v-col>
-      <v-snackbar v-model="snackbar.show" elevation="0" :color="snackbar.color" top app>
-        {{ snackbar.text }}
-      </v-snackbar>
     </v-row>
     <v-row v-for="(item, index) in questions" :key="index" :dense="$vuetify.breakpoint.mobile">
       <v-col>
@@ -130,8 +127,6 @@ import Vue from 'vue'
 import moment from 'moment'
 import { api, ResponseData } from '~/api/api'
 
-type SnackbarColor = 'success' | 'warning' | 'error' | ''
-
 interface ComponentData {
   isServerAvailable: boolean
   refreshingAvailable: boolean
@@ -139,11 +134,6 @@ interface ComponentData {
   captchaId: string
   captchaValue: string
   captchaLoadFailed: boolean
-  snackbar: {
-    show: boolean
-    color: SnackbarColor
-    text: string
-  }
   submitting: boolean
   questions: ResponseData[]
 }
@@ -156,11 +146,6 @@ export default Vue.extend({
       question: '',
       captchaId: '',
       captchaValue: '',
-      snackbar: {
-        show: false,
-        color: '',
-        text: ''
-      },
       submitting: false,
       captchaLoadFailed: false,
       questions: []
@@ -197,11 +182,11 @@ export default Vue.extend({
     },
     async submitQuestion () {
       if (this.question === '') {
-        this.showSnackbar('没有输入问题哦', 'error')
+        this.$msg.error('没有输入问题哦')
         return
       }
       if (this.captchaValue === '') {
-        this.showSnackbar('没有输入验证码哦', 'error')
+        this.$msg.error('没有输入验证码哦')
       }
 
       this.submitting = true
@@ -214,22 +199,16 @@ export default Vue.extend({
         case 200:
           this.reset()
           this.getQuestions().then()
-          this.showSnackbar('提问成功啦，等待柠喵回复吧', 'success')
+          this.$msg.success('提问成功啦，等待柠喵回复吧')
           break
         case 406:
-          this.showSnackbar('验证失败，请点击验证码图案再来一次', 'warning')
+          this.$msg.warning('验证失败，请点击验证码图案再来一次')
           break
         case 500:
-          this.showSnackbar('服务器出了点问题，可能过一会就好了', 'error')
+          this.$msg.error('服务器出了点问题，可能过一会就好了')
           break
       }
       this.submitting = false
-    },
-    showSnackbar (text: string, color: SnackbarColor) {
-      if (color === '') { return }
-      this.snackbar.text = text
-      this.snackbar.color = color
-      this.snackbar.show = true
     },
     reset () {
       this.captchaValue = ''

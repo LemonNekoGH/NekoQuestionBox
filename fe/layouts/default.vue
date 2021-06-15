@@ -22,9 +22,6 @@
         <neko-footer v-if="!$vuetify.breakpoint.mobile" />
       </v-main>
     </v-img>
-    <v-snackbar v-model="snackbar.show" elevation="0" :color="snackbar.color" top app>
-      {{ snackbar.text }}
-    </v-snackbar>
     <v-dialog v-model="openInfo" transition="dialog-bottom-transition" fullscreen>
       <v-app-bar flat color="white">
         <v-app-bar-title>关于</v-app-bar-title>
@@ -88,11 +85,6 @@ export default Vue.extend({
     return {
       background: '',
       getBackgroundFromBing: true,
-      snackbar: {
-        show: false,
-        color: '',
-        text: ''
-      },
       loadingBingWallpaper: false,
       openInfo: false
     }
@@ -131,14 +123,10 @@ export default Vue.extend({
       }
       api.be.getWallpaper().then((res) => {
         if (res === 'api-failed') {
-          this.snackbar.color = 'warning'
-          this.snackbar.text = '获取 Bing 壁纸失败，Bing 壁纸的 API 可能发生了变动'
-          this.snackbar.show = true
+          this.$msg.warning('获取 Bing 壁纸失败，服务器可能没有准备好')
           this.getBackgroundFromBing = false
         } else if (res === 'api-error') {
-          this.snackbar.color = 'error'
-          this.snackbar.text = '获取 Bing 壁纸失败，服务器可能没有准备好'
-          this.snackbar.show = true
+          this.$msg.error('获取 Bing 壁纸失败，服务器可能没有准备好')
           this.getBackgroundFromBing = false
         } else {
           this.background = res
@@ -162,9 +150,7 @@ export default Vue.extend({
     },
     copyEmail () {
       navigator.clipboard.writeText('chheese048@gmail.com')
-      this.snackbar.color = 'success'
-      this.snackbar.text = '已复制柠喵的邮箱'
-      this.snackbar.show = true
+      this.$msg.success('复制邮箱成功')
     }
   }
 })
