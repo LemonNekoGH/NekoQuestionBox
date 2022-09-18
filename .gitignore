@@ -7,9 +7,6 @@ dist/
 node_modules/
 yarn-error.log
 
-# Golang
-go.sum
-
 # macOS
 .DS_Store
 ._*
