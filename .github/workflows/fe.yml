@@ -55,8 +55,10 @@ jobs:
       - name: Build
         run: cd fe && yarn build
 
+      # 只有不是 bot 触发的构建时才进行部署
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v3
+        if: github.actor != 'dependabot[bot]' && github.actor != 'dependabot-preview[bot]'
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: fe/dist
