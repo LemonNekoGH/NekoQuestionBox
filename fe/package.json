@@ -15,7 +15,7 @@
     "@lemonneko/vuetify-message": "^1.1.7",
     "@nuxtjs/axios": "^5.13.1",
     "axios": "^0.21.1",
-    "core-js": "^3.14.0",
+    "core-js": "^3.25.1",
     "moment": "^2.29.1",
     "nuxt": "^2.15.3"
   },
@@ -31,7 +31,7 @@
     "babel-eslint": "^10.1.0",
     "babel-jest": "^29.0.3",
     "eslint": "^7.28.0",
-    "eslint-plugin-nuxt": "^2.0.0",
+    "eslint-plugin-nuxt": "^4.0.0",
     "eslint-plugin-vue": "^7.7.0",
     "jest": "^26.6.3",
     "less": "^4.1.1",
