@@ -32,6 +32,8 @@ jobs:
       - name: Auto approve
         uses: hmarr/auto-approve-action@v2
         if: github.actor == 'dependabot[bot]' || github.actor == 'dependabot-preview[bot]'
+        with:
+          github-token: ${{ secrets.SOME_USERS_PAT }}
 
       - name: Get yarn cache directory path 🛠
         id: yarn-cache-dir-path
