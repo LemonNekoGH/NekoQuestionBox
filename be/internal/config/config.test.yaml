@@ -1,0 +1,7 @@
+port: 5000
+database:
+  host: localhost
+  port: 15432
+  username: postgres
+  password: postgres
+  database: postgres
