@@ -7,6 +7,12 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+var (
+	ErrParams         = NewHandlerError(http.StatusBadRequest, 40001, "params error")
+	ErrCaptcha        = NewHandlerError(http.StatusForbidden, 40301, "captcha error")
+	ErrQuestionExists = NewHandlerError(http.StatusConflict, 40101, "question exists")
+)
+
 // 控制器要返回的错误
 type HandlerError struct {
 	Code    int    `json:"code"`
