@@ -2,6 +2,8 @@ package api
 
 import (
 	"bytes"
+	"encoding/base64"
+	"errors"
 	"io"
 	"neko-question-box-be/internal/logger"
 	"neko-question-box-be/internal/services"
@@ -11,7 +13,6 @@ import (
 
 	"github.com/dchest/captcha"
 	"github.com/gin-gonic/gin"
-	"github.com/lib/pq"
 )
 
 type postQuestionReq struct {
@@ -43,11 +44,10 @@ func getCaptchaImage(ctx *gin.Context) (handler.HandlerResponse, error) {
 	err := captcha.WriteImage(b, id, 200, 100)
 	if err != nil {
 		logger.Errorf("captcha buffer write error: %s", err.Error())
-		return nil, handler.NewHandlerError(http.StatusInternalServerError, 50001, "captcha buffer write error")
+		return nil, handler.NewHandlerError(http.StatusInternalServerError, 50001, err.Error())
 	}
-	// 禁止缓存
-	ctx.Header("cache-control", "no-cache")
-	return b.Bytes(), nil
+	// 转成 base64
+	return base64.URLEncoding.EncodeToString(b.Bytes()), nil
 }
 
 // 获取 bing 每日壁纸
@@ -81,7 +81,7 @@ func getQuestion(ctx *gin.Context) (handler.HandlerResponse, error) {
 func postQuestion(ctx *gin.Context) (handler.HandlerResponse, error) {
 	// 参数校验
 	body := postQuestionReq{}
-	if err := ctx.Bind(body); err != nil {
+	if err := ctx.Bind(&body); err != nil {
 		return nil, handler.ErrParams
 	}
 	if !body.isValid() {
@@ -96,7 +96,7 @@ func postQuestion(ctx *gin.Context) (handler.HandlerResponse, error) {
 	if err != nil {
 		logger.Errorf("save new question error: %s", err.Error())
 		// 问题已经存在
-		if pqError, ok := err.(*pq.Error); ok && pqError.Code.Name() == "unique_violation" {
+		if errors.Is(err, services.ErrQuestionExists) {
 			return nil, handler.ErrQuestionExists
 		}
 		return nil, handler.NewHandlerError(http.StatusInternalServerError, 50001, err.Error())

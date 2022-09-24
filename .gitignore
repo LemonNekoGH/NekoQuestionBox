@@ -13,3 +13,5 @@ yarn-error.log
 
 # other
 build/
+
+coverage.txt

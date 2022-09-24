@@ -23,7 +23,8 @@ func TestInitConfig(t *testing.T) {
 		assert.Equal(Conf.Database.Port, 15432)
 		assert.Equal(Conf.Database.Host, "localhost")
 		assert.Equal(Conf.Database.Username, "postgres")
-		assert.Equal(Conf.Database.Password, "postgres")
+		assert.Equal(Conf.Database.Password, "123456")
 		assert.Equal(Conf.Database.Database, "postgres")
+		assert.Equal(Conf.Database.SSLMode, "disable")
 	})
 }

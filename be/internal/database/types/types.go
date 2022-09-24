@@ -5,7 +5,7 @@ import (
 )
 
 type Question struct {
-	ID         string     `grom:"type:uuid;default:gen_random_uuid();primaryKey" json:"id"`
+	ID         string     `gorm:"type:uuid;default:gen_random_uuid();primaryKey" json:"id"`
 	Question   string     `gorm:"unique" json:"question"` // 每个问题只能出现一次
 	Answer     *string    `json:"answer"`                 // 回答
 	AnsweredAt *time.Time `json:"answeredAt"`             // 回答时间
@@ -13,5 +13,5 @@ type Question struct {
 }
 
 func (Question) TableName() string {
-	return "public.question"
+	return "public.questions"
 }

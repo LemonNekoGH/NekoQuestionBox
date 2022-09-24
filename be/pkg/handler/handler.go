@@ -1,10 +1,15 @@
 package handler
 
 import (
+	"bytes"
 	"fmt"
+	"io"
 	"net/http"
+	"net/http/httptest"
+	"net/url"
 
 	"github.com/gin-gonic/gin"
+	"github.com/goccy/go-json"
 )
 
 var (
@@ -12,6 +17,37 @@ var (
 	ErrCaptcha        = NewHandlerError(http.StatusForbidden, 40301, "captcha error")
 	ErrQuestionExists = NewHandlerError(http.StatusConflict, 40101, "question exists")
 )
+
+// 创建测试用上下文
+func CreateTestContext(method string, path string, body any) (*httptest.ResponseRecorder, *gin.Context) {
+	recorder := httptest.NewRecorder()
+	c, _ := gin.CreateTestContext(recorder)
+
+	// 把请求参数写入上下文中
+	switch t := body.(type) {
+	case io.Reader:
+		c.Request, _ = http.NewRequest(method, path, t)
+	case string:
+		// 是查询参数
+		params, err := url.ParseQuery(t)
+		if err != nil {
+			panic(err)
+		}
+		c.Request, _ = http.NewRequest(method, path, nil)
+		// 告诉上下文这个请求的格式
+		c.Request.Header.Set("content-type", "application/x-www-form-urlencoded")
+		// 设置查询参数
+		c.Request.PostForm = params
+	default:
+		// 其它情况，把请求体转换成 JSON
+		bd, _ := json.Marshal(body)
+		c.Request, _ = http.NewRequest(method, path, bytes.NewBuffer(bd))
+		// 告诉上下文这个请求体的格式
+		c.Request.Header.Set("content-type", "application/json")
+	}
+
+	return recorder, c
+}
 
 // 控制器要返回的错误
 type HandlerError struct {

@@ -3,5 +3,6 @@ database:
   host: localhost
   port: 15432
   username: postgres
-  password: postgres
+  password: 123456
   database: postgres
+  sslMode: disable

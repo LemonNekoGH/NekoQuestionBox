@@ -18,6 +18,7 @@ type Config struct {
 		Username string `yaml:"username"` // 用户名
 		Password string `yaml:"password"` // 密码
 		Database string `yaml:"database"` // 使用的数据库
+		SSLMode  string `yaml:"sslMode"`  // 是否需要 TLS 连接
 	} `yaml:"database"`
 }
 
