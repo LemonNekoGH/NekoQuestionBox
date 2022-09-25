@@ -1,8 +1,7 @@
 package api
 
 import (
-	"bytes"
-	"encoding/base64"
+	"encoding/json"
 	"errors"
 	"io"
 	"neko-question-box-be/internal/logger"
@@ -40,14 +39,15 @@ func getCaptchaImage(ctx *gin.Context) (handler.HandlerResponse, error) {
 		return nil, handler.ErrParams
 	}
 	// 把图片写进 buffer
-	b := bytes.NewBuffer([]byte{})
-	err := captcha.WriteImage(b, id, 200, 100)
+	err := captcha.WriteImage(ctx.Writer, id, 200, 100)
 	if err != nil {
 		logger.Errorf("captcha buffer write error: %s", err.Error())
 		return nil, handler.NewHandlerError(http.StatusInternalServerError, 50001, err.Error())
+	} else {
+		ctx.Abort()
 	}
 	// 转成 base64
-	return base64.URLEncoding.EncodeToString(b.Bytes()), nil
+	return nil, nil
 }
 
 // 获取 bing 每日壁纸
@@ -64,7 +64,12 @@ func getBingWallpaper(ctx *gin.Context) (handler.HandlerResponse, error) {
 		logger.Errorf("bing wallpaper error, body read error: %s", err.Error())
 		return nil, handler.NewHandlerError(http.StatusInternalServerError, 50001, err.Error())
 	}
-	return p, nil
+	// 如果直接返回 []byte，会被编码成 base64
+	// 如果直接返回 string，会变成 json 里的 json 而不是字段
+	// unmarshal body
+	b := map[string]any{}
+	json.Unmarshal(p, &b)
+	return b, nil
 }
 
 // 获取已经有的问题和答案

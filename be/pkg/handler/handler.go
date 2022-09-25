@@ -14,8 +14,8 @@ import (
 
 var (
 	ErrParams         = NewHandlerError(http.StatusBadRequest, 40001, "params error")
-	ErrCaptcha        = NewHandlerError(http.StatusForbidden, 40301, "captcha error")
-	ErrQuestionExists = NewHandlerError(http.StatusConflict, 40101, "question exists")
+	ErrCaptcha        = NewHandlerError(http.StatusNotAcceptable, 40601, "captcha error")
+	ErrQuestionExists = NewHandlerError(http.StatusConflict, 40901, "question exists")
 )
 
 // 创建测试用上下文

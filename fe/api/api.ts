@@ -1,78 +1,45 @@
-import axios, { AxiosError, AxiosResponse } from 'axios'
+import { createAxios, isSuccess } from './types'
+const axios = createAxios()
 
-axios.defaults.headers.get = {
-  Accept: 'application/json'
+export interface NewQuestionData {
+  question: string // 问题
+  value: string // captcha 值
+  id: string // captcha id
 }
 
-axios.defaults.headers.post = {
-  Accept: 'application/json'
-}
-
-axios.defaults.baseURL = process.env.baseApiUrl
-
-export interface SubmitData {
+export interface Question {
   question: string
-  captchaValue: string
-  captchaId: string
-}
-
-export interface ResponseData {
-  question: string
-  answerTime: number
+  answeredAt: number
   answer: string
-  time: number
+  createAt: number
+}
+
+export interface BingWallpaperData {
+  images: {
+    url: string
+  }[]
 }
 
 const backend = {
-  async isServerAvailable (): Promise<boolean> {
-    try {
-      const res = await axios.get('/')
-      return res.status === 200
-    } catch (e) {
-      return false
-    }
+  async isServerAvailable () {
+    const res = await axios.get<never>('/ping')
+    return isSuccess(res)
   },
-  async getCaptchaId (): Promise<string> {
-    try {
-      const res = await axios.get('/captcha')
-      return res.data.id
-    } catch (e) {
-      return ''
-    }
+  getCaptchaId () {
+    return axios.get<string>('/captcha')
   },
-  submitQuestion (data: SubmitData): Promise<number> {
-    return new Promise<number>((resolve) => {
-      axios.post('/question', data).then((res: AxiosResponse) => {
-        resolve(res.status)
-      }).catch((e: AxiosError) => {
-        if (e.response?.status) {
-          resolve(e.response.status)
-        }
-        resolve(500)
-      })
-    })
+  getCaptchaImage (id: string) {
+    return axios.get<string>(`/captcha-image?id=${id}`)
   },
-  async getWallpaper (): Promise<string> {
-    try {
-      const res = await axios.get('/bing-wallpaper')
-      if (res.data.images[0].url) {
-        return res.data.images[0].urlbase
-      }
-      return 'api-failed'
-    } catch (e) {
-      return 'api-error'
-    }
+  submitQuestion (data: NewQuestionData) {
+    return axios.post<never>('/question', data)
   },
-  async getQuestions (): Promise<ResponseData[]> {
-    try {
-      const res = await axios.get('/question')
-      return res.data
-    } catch (e) {
-      console.log(e)
-      return []
-    }
+  getWallpaper () {
+    return axios.get<BingWallpaperData>('/bing')
+  },
+  getQuestions () {
+    return axios.get<Question[]>('/question')
   }
-
 }
 
 export const api = {

@@ -2,7 +2,7 @@ import { NuxtOptionsEnv } from '@nuxt/types/config/env'
 
 const development: NuxtOptionsEnv = {
   // 当 IP 换掉之后这里也要换
-  baseApiUrl: 'http://192.168.2.62:5000'
+  baseApiUrl: 'http://localhost:5001'
 }
 
 const production: NuxtOptionsEnv = {

@@ -94,7 +94,7 @@
         </v-card>
       </v-col>
     </v-row>
-    <v-row v-for="(item, index) in questions" :key="index" :dense="$vuetify.breakpoint.mobile">
+    <v-row v-for="(item, index) in questionsWithDefault" :key="index" :dense="$vuetify.breakpoint.mobile">
       <v-col>
         <v-card class="blur" dark rounded="lg">
           <v-card-text>
@@ -110,7 +110,9 @@
           <v-divider />
           <v-card-text>
             <div :class="$vuetify.breakpoint.mobile || item.question.length > 10 ? '' : 'flex-box align-items'">
-              <div class="text-h6" :class="$vuetify.breakpoint.mobile ? '' : 'flex-1'" v-html="returnDefaultIfNoAnswer(item.answer)" />
+              <div class="text-h6" :class="$vuetify.breakpoint.mobile ? '' : 'flex-1'">
+                {{ item.answer }}
+              </div>
               <div v-if="item.answerTime" class="text-body-1">
                 {{ formatTime(item.answerTime) }}
               </div>
@@ -125,7 +127,8 @@
 <script lang="ts">
 import Vue from 'vue'
 import moment from 'moment'
-import { api, ResponseData } from '~/api/api'
+import { api, Question } from '~/api/api'
+import { isSuccess } from '~/api/types'
 
 interface ComponentData {
   isServerAvailable: boolean
@@ -135,7 +138,7 @@ interface ComponentData {
   captchaValue: string
   captchaLoadFailed: boolean
   submitting: boolean
-  questions: ResponseData[]
+  questions: Question[]
 }
 
 export default Vue.extend({
@@ -157,6 +160,16 @@ export default Vue.extend({
         return ''
       }
       return process.env.baseApiUrl + '/captcha-image?id=' + this.captchaId
+    },
+    questionsWithDefault (): Question[] {
+      const ret: Question[] = []
+      this.questions.forEach((it) => {
+        ret.push({
+          ...it,
+          answer: it.answer ? it.answer : '还没有回答'
+        })
+      })
+      return ret
     }
   },
   mounted () {
@@ -171,14 +184,13 @@ export default Vue.extend({
       this.refreshingAvailable = false
     },
     async getCaptchaId () {
-      const id = await api.be.getCaptchaId()
-      if (!id) {
-        console.log('captcha load failed')
-        this.captchaLoadFailed = true
+      const resp = await api.be.getCaptchaId()
+      if (isSuccess(resp)) {
+        this.captchaLoadFailed = false
+        this.captchaId = resp.data
         return
       }
-      this.captchaLoadFailed = false
-      this.captchaId = id
+      this.captchaLoadFailed = true
     },
     async submitQuestion () {
       if (this.question === '') {
@@ -190,22 +202,28 @@ export default Vue.extend({
       }
 
       this.submitting = true
-      const statusCode = await api.be.submitQuestion({
+      const resp = await api.be.submitQuestion({
         question: this.question,
-        captchaId: this.captchaId,
-        captchaValue: this.captchaValue
+        id: this.captchaId,
+        value: this.captchaValue
       })
-      switch (statusCode) {
-        case 200:
-          this.reset()
-          this.getQuestions().then()
-          this.$msg.success('提问成功啦，等待柠喵回复吧')
+      if (isSuccess(resp)) {
+        this.reset()
+        this.getQuestions()
+        this.$msg.success('问题提交成功')
+        this.submitting = false
+        return
+      }
+
+      switch (resp.code) {
+        case 40601:
+          this.$msg.warning('校验失败，请重试')
           break
-        case 406:
-          this.$msg.warning('验证失败，请点击验证码图案再来一次')
+        case 40901:
+          this.$msg.warning('相同的问题已存在')
           break
-        case 500:
-          this.$msg.error('服务器出了点问题，可能过一会就好了')
+        case 50001:
+          this.$msg.error('服务器内部错误')
           break
       }
       this.submitting = false
@@ -216,16 +234,15 @@ export default Vue.extend({
       this.getCaptchaId()
     },
     async getQuestions () {
-      this.questions = await api.be.getQuestions()
+      const res = await api.be.getQuestions()
+      if (isSuccess(res)) {
+        this.questions = res.data
+        return
+      }
+      this.$msg.error('获取问题集时出错')
     },
     formatTime (time: number): string {
       return moment(time).format('YYYY 年 M 月 D 日 HH:mm:ss')
-    },
-    returnDefaultIfNoAnswer (answer: string): string {
-      if (!answer) {
-        return '柠喵：柠喵还没有回答'
-      }
-      return '柠喵：' + answer
     }
   }
 })

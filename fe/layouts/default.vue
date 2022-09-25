@@ -75,6 +75,7 @@
 <script lang="ts">
 import Vue from 'vue'
 import { api } from '~/api/api'
+import { isSuccess } from '~/api/types'
 import NekoFooter from '~/components/neko-footer/index.vue'
 
 export default Vue.extend({
@@ -92,13 +93,13 @@ export default Vue.extend({
   computed: {
     formattedBackground (): string {
       if (!this.background) {
-        if (this.$vuetify.breakpoint.mobile) {
+        if ((this as any).$vuetify.breakpoint.mobile) {
           return '/placeholder_mobile.jpeg'
         }
         return '/placeholder_desktop.jpeg'
       }
       let react = '1920x1080'
-      if (this.$vuetify.breakpoint.mobile) {
+      if ((this as any).$vuetify.breakpoint.mobile) {
         react = '480x800'
       }
       return `https://www.bing.com${this.background}_${react}.jpg`
@@ -115,25 +116,16 @@ export default Vue.extend({
     media.addEventListener('change', this.changeColorScheme)
   },
   methods: {
-    getBackground () {
+    async getBackground () {
       this.loadingBingWallpaper = true
       if (!this.getBackgroundFromBing) {
         this.background = ''
         return
       }
-      api.be.getWallpaper().then((res) => {
-        if (res === 'api-failed') {
-          this.$msg.warning('获取 Bing 壁纸失败，服务器可能没有准备好')
-          this.getBackgroundFromBing = false
-        } else if (res === 'api-error') {
-          this.$msg.error('获取 Bing 壁纸失败，服务器可能没有准备好')
-          this.getBackgroundFromBing = false
-        } else {
-          this.background = res
-        }
-      }).finally(() => {
-        this.loadingBingWallpaper = false
-      })
+      const res = await api.be.getWallpaper()
+      if (isSuccess(res)) {
+        this.background = res.data.images[0].url
+      }
     },
     changeColorScheme () {
       let link: HTMLLinkElement | null = document.querySelector("link[rel~='icon']")

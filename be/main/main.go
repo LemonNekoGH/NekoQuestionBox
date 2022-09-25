@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"neko-question-box-be/internal/config"
 	"neko-question-box-be/internal/database"
 	"neko-question-box-be/internal/logger"
@@ -15,5 +16,5 @@ func main() {
 	telegram.InitTG()
 
 	r := server.InitServer()
-	r.Run()
+	r.Run(fmt.Sprintf("0.0.0.0:%d", config.Conf.Port))
 }
