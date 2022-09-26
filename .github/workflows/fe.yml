@@ -59,6 +59,6 @@ jobs:
         uses: peaceiris/actions-gh-pages@v3
         if: github.actor != 'dependabot[bot]' && github.actor != 'dependabot-preview[bot]'
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+          github_token: ${{ secrets.PAT }}
           publish_dir: fe/dist
           publish_branch: pages  # deploying branch
