@@ -47,10 +47,11 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
+      - run:
+          cd be
+
       - name: Build And Push Docker Image
         uses: docker/build-push-action@v2
-        run: |
-          cd be
         with:
           push: true
           tags: |
