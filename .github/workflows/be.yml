@@ -28,7 +28,6 @@ jobs:
             Status: Build Start
             Tag: `${{ steps.image_tag.outputs.tagName }}`
             Url: https://github.com/LemonNekoGH/NekoQuestionBox
-            Trigger: `${{ github.event.ref }}` `${{ github.event.commits[0].id }}`
   ci:
     runs-on: ubuntu-latest
 
@@ -68,4 +67,3 @@ jobs:
             Status: Build End
             Tag: `${{ steps.image_tag.outputs.tagName }}`
             Url: https://github.com/LemonNekoGH/NekoQuestionBox
-            Trigger: `${{ github.event.ref }}` `${{ github.event.commits[0].id }}`
