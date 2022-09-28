@@ -14,7 +14,7 @@ jobs:
     steps:
       - name: Get image tag from git tag
         id: image_tag
-        run: echo "::set-output tagName=$(echo ${{ github.ref_name }} | tr '/' ':')"
+        run: echo "::set-output tagName=${{ github.event.ref }}" | tr -d 'refs/tags/' | tr '/' ':'
 
       - name: Send start message to telegram
         uses: appleboy/telegram-action@master
@@ -38,7 +38,7 @@ jobs:
 
       - name: Get image tag from git tag
         id: image_tag
-        run: echo "::set-output tagName=${{ github.ref_name }}" | tr '/' ':'
+        run: echo "::set-output tagName=${{ github.event.ref }}" | tr -d 'refs/tags/' | tr '/' ':'
 
       - name: Login to GitHub
         uses: docker/login-action@v1
