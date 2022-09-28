@@ -3,9 +3,12 @@ package api
 import (
 	"encoding/json"
 	"errors"
+	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 	"io"
+	"log"
 	"neko-question-box-be/internal/logger"
 	"neko-question-box-be/internal/services"
+	"neko-question-box-be/internal/telegram"
 	"neko-question-box-be/pkg/handler"
 	"net/http"
 	"strings"
@@ -106,7 +109,21 @@ func postQuestion(ctx *gin.Context) (handler.HandlerResponse, error) {
 		}
 		return nil, handler.NewHandlerError(http.StatusInternalServerError, 50001, err.Error())
 	}
+
+	tgBotSend(body.Question)
+
 	return nil, nil
+}
+
+//把问题通过 Telegram 发送给被提问的人
+func tgBotSend(question string) error {
+	msg := tgbotapi.NewMessage(0000, question) // ChatID will be imported from a configuration file.
+	_, err := telegram.Bot.Send(msg)
+	if err != nil {
+		log.Panic(err)
+		return err
+	}
+	return nil
 }
 
 // 检查服务器状态

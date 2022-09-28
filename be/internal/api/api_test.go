@@ -103,6 +103,15 @@ func TestPostQuestion(t *testing.T) {
 	})
 }
 
+func TestTgBotSend(t *testing.T) {
+	t.Run("default", func(t *testing.T) {
+		r := require.New(t)
+		q := "test Text"
+		err := tgBotSend(q)
+		r.Empty(err)
+	})
+}
+
 func TestGetCpatchaImage(t *testing.T) {
 	t.Run("default", func(t *testing.T) {
 		r := require.New(t)

@@ -11,7 +11,7 @@ import (
 
 func main() {
 	logger.InitLogger()
-	config.InitConfig(false)
+	config.InitConfig(true)
 	database.InitDB()
 	telegram.InitTG()
 
