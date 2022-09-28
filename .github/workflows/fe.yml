@@ -28,9 +28,9 @@ jobs:
           node-version: ${{ matrix.node }}
           check-latest: true
       
-      # 自动同意 dependabot 的 pr
+      # 自动合并 Dependabot
       - name: Auto approve
-        uses: hmarr/auto-approve-action@v2
+        uses: ahmadnassri/action-dependabot-auto-merge@v2
         if: github.actor == 'dependabot[bot]' || github.actor == 'dependabot-preview[bot]'
         with:
           github-token: ${{ secrets.PAT }}
