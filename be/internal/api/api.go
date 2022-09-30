@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"io"
+	"neko-question-box-be/internal/config"
 	"neko-question-box-be/internal/logger"
 	"neko-question-box-be/internal/services"
 	"neko-question-box-be/pkg/handler"
@@ -46,7 +47,6 @@ func getCaptchaImage(ctx *gin.Context) (handler.HandlerResponse, error) {
 	} else {
 		ctx.Abort()
 	}
-	// 转成 base64
 	return nil, nil
 }
 
@@ -106,6 +106,11 @@ func postQuestion(ctx *gin.Context) (handler.HandlerResponse, error) {
 		}
 		return nil, handler.NewHandlerError(http.StatusInternalServerError, 50001, err.Error())
 	}
+	// TG Bot 已启用，发送问题到指定 id
+	if config.Conf.Telegram.Enabled {
+		services.SendToTgChat(body.Question)
+	}
+
 	return nil, nil
 }
 

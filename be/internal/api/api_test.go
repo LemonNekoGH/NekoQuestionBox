@@ -110,8 +110,8 @@ func TestGetCpatchaImage(t *testing.T) {
 		id := captcha.New()
 
 		_, c := handler.CreateTestContext(http.MethodGet, fmt.Sprintf("/captcha-image?id=%s", id), nil)
-		resp, err := getCaptchaImage(c)
-		r.NotEmpty(resp)
+		_, err := getCaptchaImage(c)
+		r.True(c.IsAborted())
 		r.Empty(err)
 	})
 

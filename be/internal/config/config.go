@@ -10,16 +10,26 @@ import (
 	_ "embed"
 )
 
+type DatabaseConfig struct {
+	Host     string `yaml:"host"`     // 主机
+	Port     int    `yaml:"port"`     // 端口号
+	Username string `yaml:"username"` // 用户名
+	Password string `yaml:"password"` // 密码
+	Database string `yaml:"database"` // 使用的数据库
+	SSLMode  string `yaml:"sslMode"`  // 是否需要 TLS 连接
+}
+
+type TelegramConfig struct {
+	ApiToken   string `yaml:"apiToken"`   // 要使用的 API Token
+	Enabled    bool   `yaml:"enabled"`    // 使用启用
+	ChatID     int64  `yaml:"chatId"`     // 问题会被发送到的聊天 ID
+	SendErrors bool   `yaml:"sendErrors"` // 是否把错误发送给目标聊天 ID
+}
+
 type Config struct {
-	Port     int `yaml:"port"`
-	Database *struct {
-		Host     string `yaml:"host"`     // 主机
-		Port     int    `yaml:"port"`     // 端口号
-		Username string `yaml:"username"` // 用户名
-		Password string `yaml:"password"` // 密码
-		Database string `yaml:"database"` // 使用的数据库
-		SSLMode  string `yaml:"sslMode"`  // 是否需要 TLS 连接
-	} `yaml:"database"`
+	Port     int             `yaml:"port"`
+	Database *DatabaseConfig `yaml:"database"`
+	Telegram *TelegramConfig `yaml:"telegram"`
 }
 
 //go:embed config.test.yaml

@@ -6,3 +6,8 @@ database:
   password: 123456
   database: postgres
   sslMode: disable
+telegram:
+  enabled: false
+  apiToken:
+  chatId:
+  sendErrors:
