@@ -1,38 +1,24 @@
 package telegram
 
 import (
+	"neko-question-box-be/internal/config"
+	"neko-question-box-be/internal/logger"
+
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
-	"log"
-	"neko-question-box-be/internal/services"
 )
 
 var Bot *tgbotapi.BotAPI
 
 func InitTG() {
-	Bot, err := tgbotapi.NewBotAPI("") // token to be imported from conf file.
+	var err error
+	Bot, err = tgbotapi.NewBotAPI(config.Conf.Telegram.ApiToken) // token to be imported from conf file.
 	if err != nil {
-		log.Panic(err)
+		panic(err)
 	}
-
-	Bot.Debug = true
-	u := tgbotapi.NewUpdate(0)
-	u.Timeout = 120
-
-	updates := Bot.GetUpdatesChan(u)
-
-	for update := range updates {
-		if update.Message == nil {
-			continue
-		}
-		if update.Message.ReplyToMessage == nil {
-			continue
-		}
-		err := services.UpdateAnswer(update.Message.Text, update.Message.ReplyToMessage.Text)
-		if err != nil {
-			msgText := err.Error()
-			msg := tgbotapi.NewMessage(update.Message.Chat.ID, msgText)
-			msg.ReplyToMessageID = update.Message.ReplyToMessage.MessageID
-			Bot.Send(msg)
-		}
+	// 发送一条消息至目标聊天以验证配置正确
+	_, err = Bot.Send(tgbotapi.NewMessage(config.Conf.Telegram.ChatID, "NekoQuestionBox Bot Started"))
+	if err != nil {
+		panic(err)
 	}
+	logger.Infof("TG Bot 启动成功")
 }

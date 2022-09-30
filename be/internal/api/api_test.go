@@ -103,15 +103,6 @@ func TestPostQuestion(t *testing.T) {
 	})
 }
 
-func TestTgBotSend(t *testing.T) {
-	t.Run("default", func(t *testing.T) {
-		r := require.New(t)
-		q := "test Text"
-		err := tgBotSend(q)
-		r.Empty(err)
-	})
-}
-
 func TestGetCpatchaImage(t *testing.T) {
 	t.Run("default", func(t *testing.T) {
 		r := require.New(t)
@@ -119,8 +110,8 @@ func TestGetCpatchaImage(t *testing.T) {
 		id := captcha.New()
 
 		_, c := handler.CreateTestContext(http.MethodGet, fmt.Sprintf("/captcha-image?id=%s", id), nil)
-		resp, err := getCaptchaImage(c)
-		r.NotEmpty(resp)
+		_, err := getCaptchaImage(c)
+		r.True(c.IsAborted())
 		r.Empty(err)
 	})
 
